@@ -1,0 +1,13 @@
+format = 2
+name = "Change Directory"
+version = "0.1.0"
+type = "exec"
+output = "change-directory.exec"
+sources = ["src/Program.hy"]
+project_references = []
+
+[package]
+id = "os.australis.change-directory"
+description = "Minimal Australis executable"
+authors = ["Aurora Softwares"]
+license = "MIT"
