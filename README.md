@@ -1,218 +1,28 @@
-# Australis-HelloWorld
+# Australis Change Directory prototype
 
-A simple **Hello, World!** application written in [Hydrogen](https://hylang.co.uk/) for **Australis OS**.
+## Current status
 
-This project demonstrates how to create, compile, and execute an application designed specifically for Australis OS using the Hydrogen programming language.
+The current source prints `Hello, World!` and does not change directories.
 
-It serves as a starting point for developers interested in building applications for Australis OS.
+`ChangeDirectory.hyproj` builds `change-directory.exec`. The Australis OS aggregate includes
+this project and installs the executable at `/Bin/change-directory.exec` in the read-only
+HyFS 2 boot image. Run it by its bare name `/Bin/` through the current
+recovery shell's `PATH`, or use `run /Bin/change-directory.exec`.
 
-## Overview
+## Planned direction
 
-Australis-HelloWorld is a minimal console application that prints a message to the terminal before exiting successfully.
+`cd` belongs in the shell because a child executable cannot change its parent shell's working directory. This project must be retired or repurposed as a path-inspection utility; it is not the planned `cd` implementation.
 
-The project demonstrates:
-
-- Writing applications in Hydrogen (`.hy`).
-- Compiling Hydrogen source code into Australis-compatible executables.
-- Generating standalone `.exec` files.
-- Loading applications from the Australis filesystem (HyFS).
-- Executing applications through the Australis user-program runtime.
-
-### Expected Output
-
-When executed within Australis OS, the application produces output similar to:
-
-```text
-australis> run /hello_world.exec
-Starting user program.
-Hello, World!
-User program exited cleanly.
-```
-
-## Requirements
-
-To build and run this project, you will need:
-
-- **Hydrogen Compiler** — A version supporting the Australis executable target.
-- **Australis OS** — A build supporting `.exec` applications.
-- **Git** — For cloning the repositories.
-- **CMake** — If building the Hydrogen compiler from source.
-
-## Getting Started
-
-### 1. Clone the Repository
-
-Clone the application repository:
-
-```bash
-git clone https://github.com/Aurora-softwares/Australis-HelloWorld.git
-cd Australis-HelloWorld
-```
-
-### 2. Compile the Application
-
-Using a Hydrogen compiler that supports the Australis target, build the application:
-
-```bash
-/path/to/hydrogen/compiler build HelloWorld.hyproj -o ./build/hello_world.exec
-```
-
-Replace `/path/to/hydrogen/compiler` with the path to your Hydrogen compiler executable.
-
-For example, when using the self-hosted Hydrogen compiler:
-
-```bash
-/path/to/Hylang-Compiler/build/self_hosting/hydrogen-stage1 \
-    build HelloWorld.hyproj \
-    -o ./build/hello_world.exec
-```
-
-**Note:** Ensure the `build` directory exists before compiling:
+Build this checkout with:
 
 ```bash
 mkdir -p build
+hy build ChangeDirectory.hyproj -o build/change-directory.exec
 ```
 
-If compilation succeeds, the generated executable will be located at:
-
-```text
-build/hello_world.exec
-```
-
-### 3. Install the Application in Australis OS
-
-Australis OS currently includes a read-only HyFS filesystem in its boot image.
-
-To include the application, copy the generated executable into the `rootfs` directory of your Australis OS source repository:
-
-```bash
-cp ./build/hello_world.exec /path/to/Australis-OS/rootfs/
-```
-
-The directory should now contain your application:
-
-```text
-Australis-OS/
-└── rootfs/
-    ├── hello_world.exec
-    └── ...
-```
-
-Rebuild the Australis OS image to include the executable.
-
-### 4. Run the Application
-
-Boot Australis OS and open its terminal.
-
-Execute the application using:
-
-```text
-run /hello_world.exec
-```
-
-Australis will load the executable from HyFS, validate its format, execute its instructions, and return control to the terminal when the application exits.
-
-## Project Structure
-
-```text
-Australis-HelloWorld/
-├── HelloWorld.hyproj     # Hydrogen project configuration
-├── Program.hy            # Application source code
-├── README.md             # Project documentation
-└── build/                # Generated build artifacts
-    └── hello_world.exec
-```
-
-The `build` directory and executable are generated during compilation.
-
-## How It Works
-
-Australis OS uses its own executable format and user-program runtime.
-
-Unlike conventional Linux executables, which contain native machine code executed directly by the processor, the current Australis `.exec` format contains instructions interpreted by the operating system.
-
-The Hydrogen compiler translates supported application code into instructions understood by the Australis runtime.
-
-The process can be summarised as follows:
-
-```text
-Hydrogen Source Code (.hy)
-          |
-          v
-    Hydrogen Compiler
-          |
-          v
-  Australis Executable (.exec)
-          |
-          v
-      HyFS Filesystem
-          |
-          v
-   Australis Program Loader
-          |
-          v
-    Instruction Interpreter
-          |
-          v
-     Terminal Output
-```
-
-### Executable Format
-
-The current Australis executable format supports a small instruction set for operations such as:
-
-- Writing text to the terminal.
-- Reading terminal input.
-- Opening and reading files.
-- Writing to application memory.
-- Exiting with a status code.
-
-Australis validates executables before execution, including checking their headers, memory requirements, and checksums.
-
-Although files use the `.exec` extension, the current executable format retains the internal AUEX v1 header for compatibility with the operating system.
-
-As Australis OS and Hydrogen continue to develop, additional instructions and application capabilities are expected to become available.
-
-## Current Limitations
-
-Australis OS is under active development.
-
-At present:
-
-- Only a limited subset of Hydrogen is supported by the Australis compiler backend.
-- Applications execute through an instruction interpreter rather than as native x86-64 userspace processes.
-- HyFS is currently read-only, meaning applications must be included in the filesystem image during the build process.
-- Advanced application functionality and operating-system APIs are still being developed.
-
-This project intentionally focuses on the simplest possible application to demonstrate the compilation and execution process.
-
-## Related Projects
-
-### Australis OS
-
-A custom operating system developed using the Hydrogen programming language.
-
-**Repository:** [Aurora-softwares/Australis-OS](https://github.com/Aurora-softwares/Australis-OS)
-
-### Hydrogen Programming Language
-
-A compiled programming language developed by Aurora Softwares, used to build Australis OS and its applications.
-
-**Website:** [hylang.co.uk](https://hylang.co.uk/)
-
-**Repository:** [Aurora-softwares/Hylang-Compiler](https://github.com/Aurora-softwares/Hylang-Compiler)
-
-## Contributing
-
-Contributions, bug reports, and suggestions are welcome.
-
-As Australis OS and the Hydrogen compiler are still evolving, compatibility and available application features may change between development versions.
-
-For compiler-specific issues, please refer to the Hydrogen Compiler repository. For operating-system issues, refer to the Australis OS repository.
-
-## License
-
-Australis-HelloWorld is released under the
-[MIT License](LICENSE).
-
-Copyright (c) 2026 Aurora Softwares.
+AUEX `.exec` files currently run in the checked interpreter. Native ring-3
+processes and a normal userland shell are later milestones. The boot root is
+read-only; writable application data belongs on the separate `/data` volume.
+The OS-level build, supported APIs, and packaging rules are described in the
+Australis OS `applications/README.md`. This README describes this project's
+actual source rather than treating its filename as proof of a finished feature.
