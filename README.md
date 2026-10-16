@@ -4,14 +4,14 @@
 
 The current source prints `Hello, World!` and does not change directories.
 
-`ChangeDirectory.hyproj` builds `change-directory.exec`. The Australis OS aggregate includes
-this project and installs the executable at `/Bin/change-directory.exec` in the read-only
-HyFS 2 boot image. Run it by its bare name `/Bin/` through the current
-recovery shell's `PATH`, or use `run /Bin/change-directory.exec`.
+`ChangeDirectory.hyproj` builds `change-directory.exec` as a historical sample.
+The normal OS image no longer includes it. An executable cannot change its
+parent shell's working directory; `cd` belongs in `CommandShell.exec`.
 
 ## Planned direction
 
-`cd` belongs in the shell because a child executable cannot change its parent shell's working directory. This project must be retired or repurposed as a path-inspection utility; it is not the planned `cd` implementation.
+Keep this project only as an example of the old placeholder. The implemented
+`cd` command lives in the userland shell.
 
 Build this checkout with:
 
@@ -21,7 +21,7 @@ hy build ChangeDirectory.hyproj -o build/change-directory.exec
 ```
 
 AUEX `.exec` files currently run in the checked interpreter. Native ring-3
-processes and a normal userland shell are later milestones. The boot root is
+processes remain a later milestone. The boot root is
 read-only; writable application data belongs on the separate `/data` volume.
 The OS-level build, supported APIs, and packaging rules are described in the
 Australis OS `applications/README.md`. This README describes this project's
